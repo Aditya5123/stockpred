@@ -1,17 +1,20 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 import yfinance as yf
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 from sklearn.preprocessing import MinMaxScaler
+from datetime import datetime, timedelta
 
 # Initialize the Flask app
 app = Flask(__name__)
 
-# Step 1: Input stock tickers
+# Enable CORS to allow requests from frontend (Vercel)
+CORS(app)
+
+# Define the stock prediction function
 def preprocess(series):
     sequence_length = 60  # 60-day input sequence
     prediction_horizon = 10  # 10-day prediction horizon
@@ -71,21 +74,18 @@ def predict_returns(tickers):
 
     return results
 
-# Step 2: Set up Flask route to handle form submission
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if request.method == "POST":
-        tickers_input = request.form["tickers"]
-        tickers = [ticker.strip() + ".NS" for ticker in tickers_input.split(',')]
-        
-        # Call the function to predict returns
-        results = predict_returns(tickers)
-        
-        # Return the results to the HTML page
-        return render_template("index.html", results=results)
+# Define the route for frontend (Vercel) to make POST requests
+@app.route("/predict", methods=["POST"])
+def predict():
+    data = request.get_json()
+    tickers = data["tickers"]
     
-    return render_template("index.html", results=None)
+    # Call the prediction function with the provided tickers
+    results = predict_returns(tickers)
+    
+    # Return the results as a JSON response
+    return jsonify({"results": results})
 
 # Run the app
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
