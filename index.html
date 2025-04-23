@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Return Prediction App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .alert {
+            background-color: #ffcccc;
+            color: red;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Return Prediction</h1>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="tickers">Enter stock tickers (comma separated):</label>
+                <input type="text" id="tickers" name="tickers" required>
+            </div>
+            <button type="submit">Predict Returns</button>
+        </form>
+
+        {% if results %}
+        <h2>Predicted Returns</h2>
+        <table>
+            <tr>
+                <th>Ticker</th>
+                <th>Current Price</th>
+                <th>Predicted Price</th>
+                <th>Predicted Return (%)</th>
+            </tr>
+            {% for result in results %}
+            <tr>
+                <td>{{ result['Ticker'] }}</td>
+                <td>{{ result['Current_Price'] }}</td>
+                <td>{{ result['Predicted_Price'] }}</td>
+                <td>{{ result['Predicted_Return_%'] }}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <div class="alert">No stocks met the return threshold.</div>
+        {% endif %}
+    </div>
+</body>
+</html>
